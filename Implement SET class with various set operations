@@ -1,1 +1,159 @@
 
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+class SET {
+    vector<int> elements;
+
+    void removeDuplicates() {
+        sort(elements.begin(), elements.end());
+        elements.erase(unique(elements.begin(), elements.end()), elements.end());
+    }public:
+    SET() {}
+
+    SET(vector<int> elems) {
+        elements = elems;
+        removeDuplicates();
+    }
+
+    vector<int> getElements() const { return elements; }
+    int size() const { return elements.size(); }
+
+    void display() const {
+        cout << "{ ";
+        for (int i = 0; i < (int)elements.size(); i++) {
+            cout << elements[i];
+            if (i != (int)elements.size() - 1) cout << ", ";
+        }
+        cout << " }";
+    }
+
+    bool isMember(int x) const {
+        for (int e : elements)
+            if (e == x) return true;
+        return false;
+    }
+
+    vector<SET> powerSet() const {
+        int n = elements.size();
+        int total = (int)pow(2, n);
+        vector<SET> result;
+        for (int mask = 0; mask < total; mask++) {
+            vector<int> subset;
+            for (int i = 0; i < n; i++)
+                if (mask & (1 << i))
+                    subset.push_back(elements[i]);
+            result.push_back(SET(subset));
+        }
+        return result;
+    }
+
+    bool isSubset(const SET& other) const {
+        for (int e : elements)
+            if (!other.isMember(e))
+                return false;
+        return true;
+    }
+
+    SET unionSet(const SET& other) const {
+        vector<int> result = elements;
+        for (int e : other.elements)
+            result.push_back(e);
+        return SET(result);
+    }
+
+    SET intersectionSet(const SET& other) const {
+        vector<int> result;
+        for (int e : elements)
+            if (other.isMember(e))
+                result.push_back(e);
+        return SET(result);
+    }
+
+    SET complement(const SET& universal) const {
+        vector<int> result;
+        for (int e : universal.elements)
+            if (!isMember(e))
+                result.push_back(e);
+        return SET(result);
+    }
+
+    SET setDifference(const SET& other) const {
+        vector<int> result;
+        for (int e : elements)
+            if (!other.isMember(e))
+                result.push_back(e);
+        return SET(result);
+    }
+
+    SET symmetricDifference(const SET& other) const {
+        SET d1 = setDifference(other);
+        SET d2 = other.setDifference(*this);
+        return d1.unionSet(d2);
+    }
+
+    vector<pair<int, int>> cartesianProduct(const SET& other) const {
+        vector<pair<int, int>> result;
+        for (int a : elements)
+            for (int b : other.elements)
+                result.push_back({a, b});
+        return result;
+    }
+};
+
+void printPairs(const vector<pair<int, int>>& pairs) {
+    cout << "{ ";
+    for (int i = 0; i < (int)pairs.size(); i++) {
+        cout << "(" << pairs[i].first << ", " << pairs[i].second << ")";
+        if (i != (int)pairs.size() - 1) cout << ", ";
+    }
+    cout << " }";
+}
+
+int main() {
+    SET A({1, 2, 3, 4, 5});
+    SET B({3, 4, 5, 6, 7});
+    SET C({1, 2, 3});
+    SET U({1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    SET X({1, 2, 3});
+    SET Y({4, 5});
+
+    cout << "A = "; A.display(); cout << "\n";
+    cout << "B = "; B.display(); cout << "\n";
+    cout << "C = "; C.display(); cout << "\n";
+    cout << "U = "; U.display(); cout << "\n\n";
+
+    cout << "a. Is Member\n";
+    cout << "Is 3 in A? " << (A.isMember(3) ? "true" : "false") << "\n";
+    cout << "Is 9 in A? " << (A.isMember(9) ? "true" : "false") << "\n\n";
+
+    cout << "b. Power Set of C\n";
+    vector<SET> ps = C.powerSet();
+    cout << "P(C) has " << ps.size() << " subsets:\n";
+    for (SET& s : ps) { cout << "  "; s.display(); cout << "\n"; }
+    cout << "\n";
+
+    cout << "c. Subset\n";
+    cout << "Is C subset of A? " << (C.isSubset(A) ? "true" : "false") << "\n";
+    cout << "Is B subset of A? " << (B.isSubset(A) ? "true" : "false") << "\n\n";
+
+    cout << "d. Union and Intersection\n";
+    cout << "A union B = "; A.unionSet(B).display(); cout << "\n";
+    cout << "A intersection B = "; A.intersectionSet(B).display(); cout << "\n\n";
+
+    cout << "e. Complement\n";
+    cout << "A' = "; A.complement(U).display(); cout << "\n";
+    cout << "B' = "; B.complement(U).display(); cout << "\n\n";
+
+    cout << "f. Set Difference and Symmetric Difference\n";
+    cout << "A - B = "; A.setDifference(B).display(); cout << "\n";
+    cout << "B - A = "; B.setDifference(A).display(); cout << "\n";
+    cout << "A symmetric difference B = "; A.symmetricDifference(B).display(); cout << "\n\n";
+
+    cout << "g. Cartesian Product\n";
+    cout << "X = "; X.display(); cout << "\n";
+    cout << "Y = "; Y.display(); cout << "\n";
+    cout << "X x Y = "; printPairs(X.cartesianProduct(Y)); cout << "\n";
+
