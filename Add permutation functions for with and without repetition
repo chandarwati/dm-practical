@@ -1,0 +1,74 @@
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+ 
+void permuteWithoutRepetition(vector<int>& digits, int start) {
+    if (start == (int)digits.size()) {
+        cout << "{ ";
+        for (int i = 0; i < (int)digits.size(); i++) {
+            cout << digits[i];
+            if (i != (int)digits.size() - 1) cout << ", ";
+        }
+        cout << " }\n";
+        return;
+    }
+    for (int i = start; i < (int)digits.size(); i++) {
+        swap(digits[start], digits[i]);
+        permuteWithoutRepetition(digits, start + 1);
+        swap(digits[start], digits[i]);
+    }
+}
+ 
+void permuteWithRepetition(vector<int>& digits, vector<int>& current, int length) {
+    if ((int)current.size() == length) {
+        cout << "{ ";
+        for (int i = 0; i < (int)current.size(); i++) {
+            cout << current[i];
+            if (i != (int)current.size() - 1) cout << ", ";
+        }
+        cout << " }\n";
+        return;
+    }
+    for (int i = 0; i < (int)digits.size(); i++) {
+        current.push_back(digits[i]);
+        permuteWithRepetition(digits, current, length);
+        current.pop_back();
+    }
+}
+ 
+int main() {
+    int n;
+    cout << "Enter number of digits: ";
+    cin >> n;
+ 
+    vector<int> digits(n);
+    cout << "Enter the digits: ";
+    for (int i = 0; i < n; i++)
+        cin >> digits[i];
+ 
+    int choice;
+    cout << "\n1. Without Repetition\n";
+    cout << "2. With Repetition\n";
+    cout << "3. Both\n";
+    cout << "Enter choice: ";
+    cin >> choice;
+ 
+    if (choice == 1 || choice == 3) {
+        cout << "\nPermutations WITHOUT Repetition:\n";
+        sort(digits.begin(), digits.end());
+        permuteWithoutRepetition(digits, 0);
+    }
+ 
+    if (choice == 2 || choice == 3) {
+        int len;
+        cout << "\nEnter length for permutations WITH repetition: ";
+        cin >> len;
+        cout << "\nPermutations WITH Repetition (length " << len << "):\n";
+        vector<int> current;
+        permuteWithRepetition(digits, current, len);
+    }
+ 
+    return 0;
+}
