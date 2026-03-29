@@ -1,1 +1,111 @@
 
+#include <iostream>
+#include <vector>
+using namespace std;
+ 
+class RELATION {
+    int n;
+    vector<vector<int>> matrix;
+ 
+public:
+    RELATION(int size, vector<vector<int>> mat) {
+        n = size;
+        matrix = mat;
+    }
+ 
+    void display() {
+        cout << "Relation Matrix:\n";
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++)
+                cout << matrix[i][j] << " ";
+            cout << "\n";
+        }
+        cout << "\n";
+    }
+ 
+    bool isReflexive() {
+        for (int i = 0; i < n; i++)
+            if (matrix[i][i] != 1)
+                return false;
+        return true;
+    }
+ 
+    bool isSymmetric() {
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                if (matrix[i][j] != matrix[j][i])
+                    return false;
+        return true;
+    }
+ 
+    bool isAntiSymmetric() {
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                if (i != j && matrix[i][j] == 1 && matrix[j][i] == 1)
+                    return false;
+        return true;
+    }
+ 
+    bool isTransitive() {
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                if (matrix[i][j] == 1)
+                    for (int k = 0; k < n; k++)
+                        if (matrix[j][k] == 1 && matrix[i][k] != 1)
+                            return false;
+        return true;
+    }
+ 
+    void checkRelationType() {
+        bool reflexive    = isReflexive();
+        bool symmetric    = isSymmetric();
+        bool antiSymmetric = isAntiSymmetric();
+        bool transitive   = isTransitive();
+ 
+        cout << "Reflexive    : " << (reflexive     ? "Yes" : "No") << "\n";
+        cout << "Symmetric    : " << (symmetric     ? "Yes" : "No") << "\n";
+        cout << "AntiSymmetric: " << (antiSymmetric ? "Yes" : "No") << "\n";
+        cout << "Transitive   : " << (transitive    ? "Yes" : "No") << "\n\n";
+ 
+        if (reflexive && symmetric && transitive)
+            cout << "Result: Equivalence Relation\n";
+        else if (reflexive && antiSymmetric && transitive)
+            cout << "Result: Partial Order Relation\n";
+        else
+            cout << "Result: None (Neither Equivalence nor Partial Order)\n";
+    }
+};
+ 
+int main() {
+    cout << "===== Relation 1: Equivalence =====\n";
+    vector<vector<int>> m1 = {
+        {1, 1, 0},
+        {1, 1, 0},
+        {0, 0, 1}
+    };
+    RELATION r1(3, m1);
+    r1.display();
+    r1.checkRelationType();
+ 
+    cout << "\n===== Relation 2: Partial Order =====\n";
+    vector<vector<int>> m2 = {
+        {1, 1, 1},
+        {0, 1, 1},
+        {0, 0, 1}
+    };
+    RELATION r2(3, m2);
+    r2.display();
+    r2.checkRelationType();
+ 
+    cout << "\n===== Relation 3: None =====\n";
+    vector<vector<int>> m3 = {
+        {1, 1, 0},
+        {0, 1, 1},
+        {1, 0, 1}
+    };
+    RELATION r3(3, m3);
+    r3.display();
+    r3.checkRelationType();
+ 
+    return 0;
+}
