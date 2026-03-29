@@ -1,0 +1,79 @@
+
+#include <iostream>
+#include <vector>
+using namespace std;
+ 
+class Graph {
+    int n;
+    vector<vector<int>> matrix;
+ 
+public:
+    Graph(int vertices) {
+        n = vertices;
+        matrix.resize(n, vector<int>(n, 0));
+    }
+ 
+    void input() {
+        cout << "Enter adjacency matrix (" << n << "x" << n << "):\n";
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                cin >> matrix[i][j];
+    }
+ 
+    void display() {
+        cout << "\nAdjacency Matrix:\n";
+        cout << "    ";
+        for (int i = 0; i < n; i++)
+            cout << "v" << i+1 << " ";
+        cout << "\n";
+        for (int i = 0; i < n; i++) {
+            cout << "v" << i+1 << "  ";
+            for (int j = 0; j < n; j++)
+                cout << " " << matrix[i][j] << " ";
+            cout << "\n";
+        }
+        cout << "\n";
+    }
+ 
+    bool isComplete() {
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                if (i == j && matrix[i][j] != 0)
+                    return false;
+                else if (i != j && matrix[i][j] != 1)
+                    return false;
+        return true;
+    }
+ 
+    void check() {
+        int edges = 0;
+        for (int i = 0; i < n; i++)
+            for (int j = i + 1; j < n; j++)
+                if (matrix[i][j] == 1)
+                    edges++;
+ 
+        int required = (n * (n - 1)) / 2;
+ 
+        cout << "Number of vertices   : " << n << "\n";
+        cout << "Edges present        : " << edges << "\n";
+        cout << "Edges required (K" << n << ")  : " << required << "\n\n";
+ 
+        if (isComplete())
+            cout << "Result: The graph IS a Complete Graph (K" << n << ")\n";
+        else
+            cout << "Result: The graph is NOT a Complete Graph\n";
+    }
+};
+ 
+int main() {
+    int n;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+ 
+    Graph g(n);
+    g.input();
+    g.display();
+    g.check();
+ 
+    return 0;
+}
